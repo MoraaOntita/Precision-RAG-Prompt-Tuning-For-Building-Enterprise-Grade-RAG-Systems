@@ -17,7 +17,7 @@ def extract_text_from_docx(docx_folder):
     return documents
 
 # Extract documents (adjust the path to your data folder)
-docx_folder = "./data"
+docx_folder = "./documents"
 extracted_documents = extract_text_from_docx(docx_folder)
 
 # Streamlit UI
