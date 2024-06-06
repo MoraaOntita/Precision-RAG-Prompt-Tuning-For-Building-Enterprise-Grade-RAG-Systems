@@ -4,7 +4,7 @@ import os
 import json
 from dotenv import load_dotenv
 from langchain.schema import Document
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 # Load environment variables from .env file
 load_dotenv()
@@ -12,7 +12,7 @@ load_dotenv()
 # Initialize OpenAI API key
 openai_api_key = os.getenv('OPENAI_API_KEY')
 if not openai_api_key:
-    raise ValueError("OPENAI_API_KEY environment variable is not set.")
+    raise ValueError("OPENAI_API_KEY environment variable is not set or is invalid.")
 
 # Initialize the embeddings model
 embed = OpenAIEmbeddings(
