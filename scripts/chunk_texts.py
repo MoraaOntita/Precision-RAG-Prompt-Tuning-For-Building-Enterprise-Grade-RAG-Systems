@@ -1,8 +1,7 @@
-# scripts/chunk_texts.py
-
-import json
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+import json
+import os
 
 # Function to create LangChain Document objects from a list of dictionaries
 def create_documents(doc_dicts):
