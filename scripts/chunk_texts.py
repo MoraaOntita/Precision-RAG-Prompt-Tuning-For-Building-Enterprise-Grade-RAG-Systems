@@ -1,3 +1,4 @@
+# scripts/chunk_texts.py
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import json
@@ -5,11 +6,11 @@ import os
 
 # Function to create LangChain Document objects from a list of dictionaries
 def create_documents(doc_dicts):
-    return [Document(page_content=doc['page_content'], metadata=doc['metadata']) for doc in doc_dicts]
+    return [Document(page_content=doc['text'], metadata=doc['metadata']) for doc in doc_dicts]
 
 # Function to save LangChain Document objects to a JSON file
 def save_documents(documents, output_file):
-    doc_dicts = [{"page_content": doc.page_content, "metadata": doc.metadata} for doc in documents]
+    doc_dicts = [{"text": doc.page_content, "metadata": doc.metadata} for doc in documents]
     with open(output_file, 'w') as file:
         json.dump(doc_dicts, file, indent=4)
     print(f"Chunked documents saved to {output_file}")

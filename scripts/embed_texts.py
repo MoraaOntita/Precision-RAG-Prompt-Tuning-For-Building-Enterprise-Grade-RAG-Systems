@@ -4,7 +4,7 @@ import os
 import json
 from dotenv import load_dotenv
 from langchain.schema import Document
-from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 # Load environment variables from .env file
 load_dotenv()
@@ -24,7 +24,7 @@ embed = OpenAIEmbeddings(
 def load_chunked_documents(input_file):
     with open(input_file, 'r') as file:
         doc_dicts = json.load(file)
-    return [Document(page_content=doc['page_content'], metadata=doc['metadata']) for doc in doc_dicts]
+    return [Document(page_content=doc['text'], metadata=doc['metadata']) for doc in doc_dicts]
 
 # Function to save embeddings to a JSON file
 def save_embeddings(embeddings, documents, output_file):
