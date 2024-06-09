@@ -1,7 +1,7 @@
 [
     {
-        "document": "cB - Careers challenge - Effective communication - W3.docx",
-        "prompt": "what is week 3 challenge document all about?",
-        "expected_output": "the business need, the skills aquired, the tasks summary of the whole week and the deliverables"
+        "document": "W4 - Utilizing AI to Enhance Social Media Management and Customer Engagement.docx",
+        "prompt": "What are week 2 deliverables",
+        "expected_output": "all the tasks required to do, when to submit, the format of the submitted files and the effects of late submission"
     }
 ]

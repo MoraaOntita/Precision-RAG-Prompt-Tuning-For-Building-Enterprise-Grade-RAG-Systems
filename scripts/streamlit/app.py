@@ -5,12 +5,14 @@ from docx import Document
 import sys
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-from langchain.schema import Document as LangchainDocument  
+from langchain.schema import Document as LangchainDocument
+import logging
 
 # Add the parent directory of 'scripts' to the sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from scripts.retriever import retrieve_relevant_context
+from scripts.prompt_generator import generate_prompts
 
 # Load environment variables from .env file
 load_dotenv()
@@ -26,6 +28,9 @@ llm = ChatOpenAI(
     model_name="gpt-4",  # Ensure you have access to GPT-4
     temperature=0.0
 )
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 
 # Function to extract text from docx files
 def extract_text_from_docx(docx_folder):
@@ -83,19 +88,24 @@ if st.button("Save All Prompts"):
             json.dump(st.session_state.prompt_data, file, indent=4)
         st.success(f"Prompt data saved to {output_file}")
 
-# Retrieve relevant context and get response from GPT-4
-if st.button("Retrieve Relevant Context and Generate Response"):
+# New functionality: Retrieve relevant context and get response from GPT-4
+if st.button("Generate and Rank Prompts"):
     if prompt:
         try:
-            relevant_contexts = retrieve_relevant_context(prompt)
-            combined_context = "\n".join([doc.page_content for doc in relevant_contexts])
-            combined_input = f"{combined_context}\n\nUser Prompt: {prompt}"
-
-            # Generate response from GPT-4
-            response = llm(combined_input)
-            st.subheader("Generated Response")
-            st.text_area("Response", response)
+            # Retrieve relevant contexts from Pinecone
+            retrieved_contexts = retrieve_relevant_context(prompt)
+            best_prompt, ranked_prompts = generate_prompts(prompt, retrieved_contexts, openai_api_key)
+            
+            # Display the best prompt
+            st.subheader("Best Generated Prompt")
+            st.text_area("Best Prompt", best_prompt)
+            
+            # Display all ranked prompts
+            st.subheader("All Ranked Prompts")
+            for i, ranked_prompt in enumerate(ranked_prompts):
+                st.text_area(f"Ranked Prompt {i+1}", ranked_prompt)
         except Exception as e:
-            st.error(f"Error retrieving relevant context or generating response: {e}")
+            st.error(f"Error generating and ranking prompts: {e}")
+            logging.error(f"Error generating and ranking prompts: {e}")
     else:
         st.error("Please enter a prompt to retrieve relevant context and generate a response.")

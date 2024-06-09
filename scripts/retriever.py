@@ -1,8 +1,6 @@
 import os
 from dotenv import load_dotenv
 import pinecone
-#  from langchain.vectorstores import Pinecone as PineconeVectorStore
-from langchain_community.vectorstores import Pinecone
 from pinecone import Pinecone, ServerlessSpec
 from langchain_openai import OpenAIEmbeddings
 from langchain.schema import Document
@@ -21,14 +19,12 @@ if not pinecone_api_key:
     raise ValueError("PINECONE_API_KEY environment variable is not set.")
 
 # Initialize the client connection
-pinecone_api_key = os.environ.get('PINECONE_API_KEY')
-
 pc = Pinecone(api_key=pinecone_api_key)
 
 index_name = "wk7-prompt-tuning"
 
 # Check if the index exists; if not, create it
-if index_name not in pc.list_indexes().names():
+if index_name not in [index['name'] for index in pc.list_indexes()]:
     pc.create_index(
         name=index_name,
         dimension=1536,
@@ -36,11 +32,12 @@ if index_name not in pc.list_indexes().names():
         spec=ServerlessSpec(
             cloud='aws', 
             region='us-east-1'
-        ) 
+        )
     ) 
     
-# Connecting
-index = pc.Index(index_name)
+# Initialize the index with the correct host
+index_host = "https://wk7-prompt-tuning-0ilef8k.svc.aped-4627-b74a.pinecone.io"
+index = pc.Index(host=index_host)
 
 # Initialize the embeddings model
 embeddings = OpenAIEmbeddings(
@@ -61,4 +58,3 @@ def retrieve_relevant_context(prompt, top_k=5):
         for result in results['matches']
     ]
     return relevant_documents
-
