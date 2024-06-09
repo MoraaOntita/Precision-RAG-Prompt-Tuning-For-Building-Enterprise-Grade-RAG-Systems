@@ -2,6 +2,30 @@ import json
 import os
 import streamlit as st
 from docx import Document
+import sys
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from langchain.schema import Document as LangchainDocument  
+
+# Add the parent directory of 'scripts' to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from scripts.retriever import retrieve_relevant_context
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Initialize OpenAI API key
+openai_api_key = os.getenv('OPENAI_API_KEY')
+if not openai_api_key:
+    raise ValueError("OPENAI_API_KEY environment variable is not set.")
+
+# Initialize OpenAI model for chatting
+llm = ChatOpenAI(
+    openai_api_key=openai_api_key,
+    model_name="gpt-4",  # Ensure you have access to GPT-4
+    temperature=0.0
+)
 
 # Function to extract text from docx files
 def extract_text_from_docx(docx_folder):
@@ -59,4 +83,19 @@ if st.button("Save All Prompts"):
             json.dump(st.session_state.prompt_data, file, indent=4)
         st.success(f"Prompt data saved to {output_file}")
 
+# Retrieve relevant context and get response from GPT-4
+if st.button("Retrieve Relevant Context and Generate Response"):
+    if prompt:
+        try:
+            relevant_contexts = retrieve_relevant_context(prompt)
+            combined_context = "\n".join([doc.page_content for doc in relevant_contexts])
+            combined_input = f"{combined_context}\n\nUser Prompt: {prompt}"
 
+            # Generate response from GPT-4
+            response = llm(combined_input)
+            st.subheader("Generated Response")
+            st.text_area("Response", response)
+        except Exception as e:
+            st.error(f"Error retrieving relevant context or generating response: {e}")
+    else:
+        st.error("Please enter a prompt to retrieve relevant context and generate a response.")
