@@ -11,8 +11,8 @@ import logging
 # Add the parent directory of 'scripts' to the sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-from scripts.retriever import retrieve_relevant_context
-from scripts.prompt_generator import generate_prompts
+from scripts.prompt_generation.retriever import retrieve_relevant_context
+from scripts.prompt_generation.prompt_generator import generate_prompts
 
 # Load environment variables from .env file
 load_dotenv()
