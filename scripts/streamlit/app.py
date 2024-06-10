@@ -53,7 +53,7 @@ docx_folder = "./documents"
 extracted_documents = extract_text_from_docx(docx_folder)
 
 # Streamlit UI
-st.title("Prompt Generation Tool")
+st.title("Prompt Engineering Tool")
 
 # Let user select a document
 document_names = [doc['file_name'] for doc in extracted_documents]
