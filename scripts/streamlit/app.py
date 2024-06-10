@@ -7,14 +7,15 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain.schema import Document as LangchainDocument
 import logging
-from scripts.prompt_generation.retriever import retrieve_relevant_context
-from scripts.prompt_generation.prompt_generator import generate_prompts
-from scripts.prompt_testing_and_ranking_service.test_case_generator import generate_test_cases
-from scripts.prompt_testing_and_ranking_service.evaluator import evaluate_test_cases
-from scripts.prompt_testing_and_ranking_service.report_generator import generate_report, save_report_to_file, save_results_to_json
 
 # Add the parent directory of 'scripts' to the sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from scripts.prompt_generation.retriever import retrieve_relevant_context
+from scripts.prompt_generation.prompt_generator import generate_prompts
+from scripts.prompt_testing_and_ranking.prompt import Prompt
+from scripts.prompt_testing_and_ranking.monte_carlo import monte_carlo_matchmaking
+from scripts.prompt_testing_and_ranking.elo_rating import update_elo
 
 # Load environment variables from .env file
 load_dotenv()
@@ -90,7 +91,7 @@ if st.button("Save All Prompts"):
             json.dump(st.session_state.prompt_data, file, indent=4)
         st.success(f"Prompt data saved to {output_file}")
 
-# New functionality: Generate and Rank Prompts
+# New functionality: Retrieve relevant context and get response from GPT-4
 if st.button("Generate and Rank Prompts"):
     if prompt:
         try:
@@ -106,37 +107,26 @@ if st.button("Generate and Rank Prompts"):
             st.subheader("All Ranked Prompts")
             for i, ranked_prompt in enumerate(ranked_prompts):
                 st.text_area(f"Ranked Prompt {i+1}", ranked_prompt)
-            
-            # Generate test cases
-            st.subheader("Generated Test Cases")
-            num_test_cases = st.number_input("Number of Test Cases", min_value=1, max_value=20, value=10)
-            scenario = st.selectbox("Select a scenario", ["default", "greeting", "question"])
-            test_cases = generate_test_cases(num_random_cases=num_test_cases, scenario=scenario)
-            for i, test_case in enumerate(test_cases):
-                st.text_area(f"Test Case {i+1}", test_case)
-            
-            # Evaluate test cases
-            st.subheader("Evaluation Results")
-            evaluation_results = evaluate_test_cases(test_cases)
-            for case, result in evaluation_results:
-                st.text_area(f"Test Case: {case}", f"Result: {result}")
-            
-            # Generate and save report
-            report = generate_report(evaluation_results)
-            st.text_area("Evaluation Report", report)
-            
-            report_filename = st.text_input("Enter the report filename", "evaluation_report.txt")
-            if st.button("Save Report"):
-                save_report_to_file(report, report_filename)
-                st.success(f"Report saved to {report_filename}")
-                
-            results_filename = st.text_input("Enter the results filename", "evaluation_results.json")
-            if st.button("Save Results"):
-                save_results_to_json(evaluation_results, results_filename)
-                st.success(f"Results saved to {results_filename}")
-        
         except Exception as e:
             st.error(f"Error generating and ranking prompts: {e}")
             logging.error(f"Error generating and ranking prompts: {e}")
     else:
         st.error("Please enter a prompt to retrieve relevant context and generate a response.")
+
+# Function to evaluate and rank prompts using Monte Carlo and ELO rating
+if st.button("Evaluate and Rank Prompts"):
+    try:
+        # Initialize prompts
+        prompt_objects = [Prompt(text=p['prompt']) for p in st.session_state.prompt_data]
+
+        # Run Monte Carlo matchmaking
+        monte_carlo_matchmaking(prompt_objects, num_simulations=100)
+
+        # Display ranked prompts
+        ranked_prompts = sorted(prompt_objects, key=lambda x: x.elo_rating, reverse=True)
+        st.subheader("Ranked Prompts")
+        for i, prompt_obj in enumerate(ranked_prompts):
+            st.text_area(f"Ranked Prompt {i+1} (ELO: {prompt_obj.elo_rating})", prompt_obj.text)
+    except Exception as e:
+        st.error(f"Error evaluating and ranking prompts: {e}")
+        logging.error(f"Error evaluating and ranking prompts: {e}")
