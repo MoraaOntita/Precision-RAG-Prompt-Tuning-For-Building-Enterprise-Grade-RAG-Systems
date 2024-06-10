@@ -51,8 +51,11 @@ clean:
 # Rebuild and restart all services
 rebuild: clean build_all up
 
+# Test target
+test:
+	python -m unittest discover tests
+
 .PHONY: all text_extraction load_texts create_metadata chunk_texts embed_texts upsert_embeddings \
 	build_prompt_generation_service build_automatic_evaluation_service build_prompt_testing_and_ranking_service \
-	build_all up down restart logs clean rebuild
-
+	build_all up down restart logs clean rebuild test
 
