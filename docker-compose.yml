@@ -1,0 +1,36 @@
+version: '3.10'
+
+services:
+  prompt_generation_service:
+    build:
+      context: ./scripts/prompt_generation_service
+      dockerfile: Dockerfile
+    container_name: prompt_generation_service
+    ports:
+      - "5000:5000" 
+    environment:
+      - VARIABLE_NAME=value
+
+  automatic_evaluation_service:
+    build:
+      context: ./scripts/automatic_evaluation_service
+      dockerfile: Dockerfile
+    container_name: automatic_evaluation_service
+    ports:
+      - "5001:5001"  
+    environment:
+      - VARIABLE_NAME=value
+
+  prompt_testing_and_ranking_service:
+    build:
+      context: ./scripts/prompt_testing_and_ranking_service
+      dockerfile: Dockerfile
+    container_name: prompt_testing_and_ranking_service
+    ports:
+      - "5002:5002" 
+    environment:
+      - VARIABLE_NAME=value
+
+networks:
+  default:
+    driver: bridge

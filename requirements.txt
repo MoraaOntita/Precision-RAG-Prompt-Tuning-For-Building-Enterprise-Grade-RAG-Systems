@@ -1,0 +1,10 @@
+openai
+python-dotenv
+langchain
+llama-index
+python-docx
+pinecone-client
+transformers
+sentence-transformers
+scikit-learn
+langchain-openai
