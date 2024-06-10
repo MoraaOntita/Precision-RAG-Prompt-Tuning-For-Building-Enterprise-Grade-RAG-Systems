@@ -1,4 +1,3 @@
-# Original tasks
 all: text_extraction load_texts create_metadata chunk_texts embed_texts upsert_embeddings
 
 text_extraction:
@@ -51,11 +50,19 @@ clean:
 # Rebuild and restart all services
 rebuild: clean build_all up
 
-# Test target
-test:
-	python -m unittest discover tests
+# Test targets
+unit_test:
+	python -m unittest discover tests/unit_tests
+
+integration_test:
+	python -m unittest discover tests/integration_tests
+
+system_test:
+	python tests/system_tests/test_system.py
+
+test: unit_test integration_test system_test
 
 .PHONY: all text_extraction load_texts create_metadata chunk_texts embed_texts upsert_embeddings \
 	build_prompt_generation_service build_automatic_evaluation_service build_prompt_testing_and_ranking_service \
-	build_all up down restart logs clean rebuild test
-
+	build_all up down restart logs clean rebuild \
+	unit_test integration_test system_test test

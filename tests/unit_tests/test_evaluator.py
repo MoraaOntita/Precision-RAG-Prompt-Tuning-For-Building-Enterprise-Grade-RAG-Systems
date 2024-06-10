@@ -1,4 +1,3 @@
-# tests/test_evaluator.py
 import pytest
 from scripts.automate_evaluation_service.evaluator import evaluate_test_cases
 

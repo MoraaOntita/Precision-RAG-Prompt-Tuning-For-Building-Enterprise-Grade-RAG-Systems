@@ -1,4 +1,3 @@
-# tests/test_evaluation_service.py
 import pytest
 from scripts.automate_evaluation_service.evaluation_service import evaluate_prompt, evaluate_test_cases, generate_report
 

@@ -1,4 +1,3 @@
-# tests/test_chunk_test.py
 import pytest
 from scripts.prompt_generation import chunk_text
 

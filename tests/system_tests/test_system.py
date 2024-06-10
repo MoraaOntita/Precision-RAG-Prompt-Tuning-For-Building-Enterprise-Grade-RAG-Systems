@@ -1,4 +1,3 @@
-# tests/test_system.py
 import os
 import json
 import tempfile

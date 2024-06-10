@@ -1,4 +1,3 @@
-# tests/test_prompt_generator.py
 import pytest
 from scripts.prompt_generation.prompt_generator import generate_prompts
 

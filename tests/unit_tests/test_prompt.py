@@ -1,4 +1,3 @@
-# tests/test_prompt.py
 import pytest
 from scripts.prompt_testing_and_ranking.prompt import Prompt
 

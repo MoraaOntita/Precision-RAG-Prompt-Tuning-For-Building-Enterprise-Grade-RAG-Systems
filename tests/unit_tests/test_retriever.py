@@ -1,4 +1,3 @@
-# tests/test_retriever.py
 import pytest
 from scripts.prompt_generation.retriever import retrieve_relevant_context
 

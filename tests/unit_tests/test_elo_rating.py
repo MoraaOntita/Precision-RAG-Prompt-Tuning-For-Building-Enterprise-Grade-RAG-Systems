@@ -1,4 +1,3 @@
-# tests/test_elo_rating.py
 import pytest
 from scripts.prompt_testing_and_ranking.elo_rating import update_elo
 from scripts.prompt_testing_and_ranking.prompt import Prompt

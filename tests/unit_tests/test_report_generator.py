@@ -1,4 +1,3 @@
-# tests/test_report_generator.py
 import pytest
 from scripts.automate_evaluation_service.report_generator import generate_report
 

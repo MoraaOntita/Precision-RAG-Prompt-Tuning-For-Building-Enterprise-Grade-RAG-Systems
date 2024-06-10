@@ -1,4 +1,3 @@
-# tests/test_app.py
 import pytest
 from streamlit.testing import StreamlitTestRunner
 
