@@ -48,7 +48,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run tests
-      run: make test  # Assuming you have a test target in your Makefile
+      run: make test  
 
   deploy:
     runs-on: ubuntu-latest
